@@ -6,5 +6,5 @@ JSON as vim configuration
 ### Linux & Mac
 
 ```shell
-git clone https://github.com/xamfoo/vim-json-config ~/.vim/pack/xamfoo-vim-json-config
+git clone https://github.com/xamfoo/vim-json-config ~/.vim/pack/xamfoo/start/vim-json-config
 ```
