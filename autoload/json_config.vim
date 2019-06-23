@@ -3,49 +3,17 @@
 " Version:      0.1
 "
 
-function! s:VimStatements(body)
-  let l:statements = type(a:body) == type([]) ? a:body : [a:body]
-  let l:results = []
-
-  for s in l:statements
-    if type(s) == type('')
-      let l:results = l:results + [s]
-      continue
-    endif
-
-    if type(s) == type({})
-      if !has_key(s, 'type') || type(s.type) != type('')
-        continue
-      endif
-
-      if s.type == 'if'
-        let l:results = l:results +
-          \ ['if ' . s.condition, s:VimStatements(s.then), 'else', s:VimStatements(s.else), "endif"]
-        continue
-      endif
-    endif
-  endfor
-
-  return join(l:results, "\n")
-endfunction
-
-function! s:VimFunctions(m)
+function! s:VimSource(m)
   let l:m = a:m
 
-  if !has_key(m, 'functions')
+  if !has_key(m, 'source')
     return
   endif
 
-  let l:functions = type(m.functions) == type([]) ? m.functions : [m.functions]
+  let l:source = type(m.source) == type([]) ? m.source : [m.source]
 
-  for f in l:functions
-    if !has_key(f, 'name')
-      echoerr "function has no name - " . string(m)
-      return
-    endif
-
-    exec 'function! ' . f.name . '(' . join(f.args, ', ') . ")\n"
-      \ s:VimStatements(f.body) . "\nendfunction"
+  for p in l:source
+    execute 'source ' . p
   endfor
 endfunction
 
@@ -197,7 +165,7 @@ function! s:VimKeymap(m)
 endfunction
 
 function! s:load_single_config(opts, config)
-  call s:VimFunctions(a:config)
+  call s:VimSource(a:config)
   call s:VimKeymap(a:config)
   call s:VimCommands(a:config)
   call s:VimConfig(a:config)
